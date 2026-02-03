@@ -1,24 +1,28 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
-
+#include <ctype.h>
 
 void exibirMenu();
-void exibirTelaDeJogo(int, char [],char [] );
+void exibirTelaDeJogo(int, char [],char [] , int, char[]);
 int verificarLetra(char, char [], char [] );
 int verificarPalavra(char [], char []);
+int usadoLetra(char , char []);
 
 
 int main()
 {
-    #define RED     "\033[1;31m"
-    #define RESET   "\033[0m"
+    #define RED      "\033[1;31m"
+    #define RESET    "\033[0m"
     #define  GREEN   "\033[1;32m"
+    #define GREY     "\033[1;30m"
+
+
 
     char palavra[47], letraPalavra[47];
-    char alfabeto [51] = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z";
-    char usadoalfabeto[27];
-    int opcaoMenu = 0,QatLetras = 0;
+    char alfabeto [26] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    char usadoalfabeto[26] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    int opcaoMenu = 0,QatLetras = 0, vida = 8;
 
     exibirMenu();
     scanf(" %d", &opcaoMenu);
@@ -27,6 +31,7 @@ int main()
         printf("Iniciando o jogo...\n");
         printf("Digite a palavra secreta: ");
         scanf(" %46s", palavra);
+        _strupr(palavra);
         QatLetras = strlen(palavra);
 
         /*for ( int c = 0 ; c < QatLetras ; c++)
@@ -34,26 +39,31 @@ int main()
         letraPalavra[QatLetras] = '\0'; */
          memset(letraPalavra, 0, 47);
 
-        for (int vida = 6;vida >0 ;vida--){
+        while (vida > 0)
+        {
             char letra;
             
-            exibirTelaDeJogo(QatLetras , alfabeto,letraPalavra);
+            exibirTelaDeJogo(QatLetras , alfabeto,letraPalavra, vida, usadoalfabeto);
             if(verificarPalavra(palavra, letraPalavra)){
+                printf("vocer galhor\n");
                 break;
             }
 
             printf("Digite uma letra: ");
             scanf(" %c", &letra);
-
-           // verificarLetra(letra,alfabeto,usadoalfabeto )
-
-            if(verificarLetra(letra, palavra, letraPalavra)){
-                printf(GREEN"Letra correta!\n" RESET);
-            }else{
-                printf(RED "Letra incorreta!\n"RESET );
-            }
+            letra = toupper(letra);
+ 
+            if(usadoLetra(letra, usadoalfabeto) == 1){
+                if(verificarLetra(letra, palavra, letraPalavra)){
+                    printf(GREEN"Letra correta!\n" RESET);
+                }else{
+                    printf(RED "Letra incorreta!\n" RESET );
+                    vida--;
+                }
+             }else
+                  printf(RED "ja foi usado!\n" RESET );
         }
-        printf("vocer galhor\n");
+        
 
 
     }else if(opcaoMenu == 2){
@@ -80,13 +90,27 @@ void exibirMenu()
     printf("3 - Sair\n");
 }
 
-void exibirTelaDeJogo(int QatLetras, char alfabeto[], char letraPalavra[] ){
+void exibirTelaDeJogo(int QatLetras, char alfabeto[], char letraPalavra[] , int vida, char usadoalfabeto[]){
     printf("\n\njogo da Forca\n\n");
     printf(" _______\n");
     printf(" |     |\n");   
-    printf(" |     O\n");
-    printf(" |    /|\\  \n");
-    printf(" |   _/ \\_ \n");
+    printf(" |     ");  
+    if(vida < 8) printf("o");
+    printf("\n");
+
+    printf(" |    ");
+    if(vida == 6) printf(" | ");
+    if(vida == 5) printf("/|");
+    if(vida <= 4) printf("/|\\");
+    printf("\n");
+
+    printf(" |   ");
+     if(vida == 3) printf(" /");
+     if(vida == 2) printf(" / \\");
+     if(vida == 1) printf("_/ \\");
+     if(vida == 0) printf("_/ \\_");
+    printf("\n");
+
     printf(" |\n");     
     printf("_|_  ");
 
@@ -95,7 +119,16 @@ void exibirTelaDeJogo(int QatLetras, char alfabeto[], char letraPalavra[] ){
         printf("[%c] " , letraPalavra[i]);
 
     printf("\n\n");
-    printf("Letras disponiveis: %s\n", alfabeto);
+    printf("Letras disponiveis:");
+    for(int t = 0 ; t < strlen(alfabeto) - 1; t++ ){
+        if(alfabeto[t] == usadoalfabeto[t] ){
+            printf(" %c ", alfabeto[t] );
+        }else
+            printf( GREY " %c " RESET, alfabeto[t]);
+    }
+
+        printf("\n\n");
+
 }
 
 int verificarLetra(char lestra, char palavra[],char letraPalavra[] ){
@@ -113,5 +146,15 @@ int verificarPalavra(char palavra[], char letraPalavra[]){
 
     if (strcmp(palavra, letraPalavra) == 0) 
        return 1;
+    return 0;
+}
+
+int usadoLetra(char lestra, char usadoalfabeto[]){
+    for(int i = 0; i < strlen(usadoalfabeto); i++){
+        if( lestra == usadoalfabeto[i]){
+            usadoalfabeto[i] = tolower(lestra);
+            return 1;
+        }
+    }
     return 0;
 }
