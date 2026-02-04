@@ -2,79 +2,143 @@
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdlib.h>
+#include <time.h>
+#include <locale.h>
 
 void exibirMenu();
-void exibirTelaDeJogo(int, char [],char [] , int, char[]);
-int verificarLetra(char, char [], char [] );
-int verificarPalavra(char [], char []);
-int usadoLetra(char , char []);
+void exibirTelaDeJogo(int, char[]);
+void exibirForca(int);
+void exibirLetraDisponiveis(char[], char[]);
+int verificarLetra(char, char[], char[]);
+int verificarPalavra(char[], char[]);
+int usadoLetra(char, char[]);
+
+void limparQuebraDeLinha(char *);
+void sortearPalavra(char *);
 
 
 int main()
 {
-    #define RED      "\033[1;31m"
-    #define RESET    "\033[0m"
-    #define  GREEN   "\033[1;32m"
-    #define GREY     "\033[1;30m"
+#define RED "\033[1;31m"
+#define RESET "\033[0m"
+#define GREEN "\033[1;32m"
+#define GREY "\033[1;30m"
 
+    do
+    {
+        char palavra[47], letraPalavra[47];
+        char alfabeto[26] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        char usadoalfabeto[26] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        int opcaoMenu = 0, QatLetras = 0, vida = 8;
 
+        exibirMenu();
+        scanf(" %d", &opcaoMenu);
 
-    char palavra[47], letraPalavra[47];
-    char alfabeto [26] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    char usadoalfabeto[26] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    int opcaoMenu = 0,QatLetras = 0, vida = 8;
-
-    exibirMenu();
-    scanf(" %d", &opcaoMenu);
-
-    if(opcaoMenu == 1){
-        printf("Iniciando o jogo...\n");
-        printf("Digite a palavra secreta: ");
-        scanf(" %46s", palavra);
-        _strupr(palavra);
-        QatLetras = strlen(palavra);
-
-        /*for ( int c = 0 ; c < QatLetras ; c++)
-            letraPalavra[c] = 'a';
-        letraPalavra[QatLetras] = '\0'; */
-         memset(letraPalavra, 0, 47);
-
-        while (vida > 0)
+        if (opcaoMenu == 1)
         {
-            char letra;
-            
-            exibirTelaDeJogo(QatLetras , alfabeto,letraPalavra, vida, usadoalfabeto);
-            if(verificarPalavra(palavra, letraPalavra)){
-                printf("vocer galhor\n");
-                break;
-            }
+            printf("Iniciando o jogo...\n");
+            printf("Digite a palavra secreta: ");
+            scanf(" %46s", palavra);
+            _strupr(palavra);
+            QatLetras = strlen(palavra);
 
-            printf("Digite uma letra: ");
-            scanf(" %c", &letra);
-            letra = toupper(letra);
- 
-            if(usadoLetra(letra, usadoalfabeto) == 1){
-                if(verificarLetra(letra, palavra, letraPalavra)){
-                    printf(GREEN"Letra correta!\n" RESET);
-                }else{
-                    printf(RED "Letra incorreta!\n" RESET );
-                    vida--;
+            /*for ( int c = 0 ; c < QatLetras ; c++)
+                letraPalavra[c] = 'a';
+            letraPalavra[QatLetras] = '\0'; */
+            memset(letraPalavra, 0, 47);
+
+            while (vida > 0)
+            {
+                char letra;
+                printf("\n\njogo da Forca\n\n");
+
+                exibirForca(vida);
+                exibirTelaDeJogo(QatLetras, letraPalavra);
+                exibirLetraDisponiveis(alfabeto, usadoalfabeto);
+
+                if (verificarPalavra(palavra, letraPalavra))
+                {
+                    printf("vocer galhor\n");
+                    break;
                 }
-             }else
-                  printf(RED "ja foi usado!\n" RESET );
+
+                printf("Digite uma letra: ");
+                scanf(" %c", &letra);
+                letra = toupper(letra);
+
+                if (usadoLetra(letra, usadoalfabeto) == 1)
+                {
+                    if (verificarLetra(letra, palavra, letraPalavra))
+                    {
+                        printf(GREEN "Letra correta!\n" RESET);
+                    }
+                    else
+                    {
+                        printf(RED "Letra incorreta!\n" RESET);
+                        vida--;
+                    }
+                }
+                else
+                    printf(RED "ja foi usado!\n" RESET);
+            }
         }
-        
+        else if (opcaoMenu == 2)
+        {
+            printf("Iniciando o jogo automaticamente...\n");
+            sortearPalavra(palavra);
+            _strupr(palavra);
+            QatLetras = strlen(palavra);
 
 
-    }else if(opcaoMenu == 2){
-        printf("Iniciando o jogo automaticamente...\n");
+            while (vida > 0)
+            {
+                char letra;
+                printf("\n\njogo da Forca\n\n");
 
-    }else if(opcaoMenu == 3){
-        printf("Saindo do jogo...\n");
-        return 0;
-    }
+                exibirForca(vida);
+                exibirTelaDeJogo(QatLetras, letraPalavra);
+                exibirLetraDisponiveis(alfabeto, usadoalfabeto);
 
-    printf(" \n");
+                if (verificarPalavra(palavra, letraPalavra))
+                {
+                    printf("vocer galhor\n");
+                    break;
+                }
+
+                printf("Digite uma letra: ");
+                scanf(" %c", &letra);
+                letra = toupper(letra);
+
+                if (usadoLetra(letra, usadoalfabeto) == 1)
+                {
+                    if (verificarLetra(letra, palavra, letraPalavra))
+                    {
+                        printf(GREEN "Letra correta!\n" RESET);
+                    }
+                    else
+                    {
+                        printf(RED "Letra incorreta!\n" RESET);
+                        vida--;
+                    }
+                }
+                else
+                    printf(RED "ja foi usado!\n" RESET);
+            }
+            
+
+        }
+        else if (opcaoMenu == 3)
+        {
+            printf("Saindo do jogo...\n");
+            return 0;
+        }
+
+        printf("\n\n Fim de jogo, vocer quer conuir ou mudar de modo ? \n\n");
+
+        printf(" \n");
+
+    } while (1);
 }
 
 void exibirMenu()
@@ -90,71 +154,134 @@ void exibirMenu()
     printf("3 - Sair\n");
 }
 
-void exibirTelaDeJogo(int QatLetras, char alfabeto[], char letraPalavra[] , int vida, char usadoalfabeto[]){
-    printf("\n\njogo da Forca\n\n");
+void exibirTelaDeJogo(int QatLetras, char letraPalavra[])
+{
+
+    int i = 0;
+    for (i = 0; i < QatLetras; i++)
+        printf("[%c] ", letraPalavra[i]);
+
+    printf("\n\n");
+}
+
+void exibirForca(int vida)
+{
+
     printf(" _______\n");
-    printf(" |     |\n");   
-    printf(" |     ");  
-    if(vida < 8) printf("o");
+    printf(" |     |\n");
+    printf(" |     ");
+    if (vida < 8)
+        printf("o");
     printf("\n");
 
     printf(" |    ");
-    if(vida == 6) printf(" | ");
-    if(vida == 5) printf("/|");
-    if(vida <= 4) printf("/|\\");
+    if (vida == 6)
+        printf(" | ");
+    if (vida == 5)
+        printf("/|");
+    if (vida <= 4)
+        printf("/|\\");
     printf("\n");
 
     printf(" |   ");
-     if(vida == 3) printf(" /");
-     if(vida == 2) printf(" / \\");
-     if(vida == 1) printf("_/ \\");
-     if(vida == 0) printf("_/ \\_");
+    if (vida == 3)
+        printf(" /");
+    if (vida == 2)
+        printf(" / \\");
+    if (vida == 1)
+        printf("_/ \\");
+    if (vida == 0)
+        printf("_/ \\_");
     printf("\n");
 
-    printf(" |\n");     
+    printf(" |\n");
     printf("_|_  ");
-
-    int i = 0;
-    for(i = 0; i < QatLetras; i++)
-        printf("[%c] " , letraPalavra[i]);
-
-    printf("\n\n");
-    printf("Letras disponiveis:");
-    for(int t = 0 ; t < strlen(alfabeto) - 1; t++ ){
-        if(alfabeto[t] == usadoalfabeto[t] ){
-            printf(" %c ", alfabeto[t] );
-        }else
-            printf( GREY " %c " RESET, alfabeto[t]);
-    }
-
-        printf("\n\n");
-
 }
 
-int verificarLetra(char lestra, char palavra[],char letraPalavra[] ){
-    int res = 0;
-    for(int i = 0; i < strlen(palavra); i++){
-        if(lestra == palavra[i]){
-            letraPalavra[i] = lestra;
-            res =  1;
+void exibirLetraDisponiveis(char alfabeto[], char usadoalfabeto[])
+{
+
+    printf("\nLetras disponiveis:");
+    for (int t = 0; t < strlen(alfabeto) - 1; t++)
+    {
+        if (alfabeto[t] == usadoalfabeto[t])
+        {
+            printf(" %c ", alfabeto[t]);
         }
-    } 
+        else
+            printf(GREY " %c " RESET, alfabeto[t]);
+    }
+
+    printf("\n");
+}
+
+int verificarLetra(char lestra, char palavra[], char letraPalavra[])
+{
+    int res = 0;
+    for (int i = 0; i < strlen(palavra); i++)
+    {
+        if (lestra == palavra[i])
+        {
+            letraPalavra[i] = lestra;
+            res = 1;
+        }
+    }
     return res;
 }
 
-int verificarPalavra(char palavra[], char letraPalavra[]){
+int verificarPalavra(char palavra[], char letraPalavra[])
+{
 
-    if (strcmp(palavra, letraPalavra) == 0) 
-       return 1;
+    if (strcmp(palavra, letraPalavra) == 0)
+        return 1;
     return 0;
 }
 
-int usadoLetra(char lestra, char usadoalfabeto[]){
-    for(int i = 0; i < strlen(usadoalfabeto); i++){
-        if( lestra == usadoalfabeto[i]){
+int usadoLetra(char lestra, char usadoalfabeto[])
+{
+    for (int i = 0; i < strlen(usadoalfabeto); i++)
+    {
+        if (lestra == usadoalfabeto[i])
+        {
             usadoalfabeto[i] = tolower(lestra);
             return 1;
         }
     }
     return 0;
 }
+
+
+void limparQuebraDeLinha(char *str) {
+    int tamanho = strlen(str);
+    if (tamanho > 0 && (str[tamanho - 1] == '\n' || str[tamanho - 1] == '\r')) {
+        str[tamanho - 1] = '\0';
+    }
+}
+
+void sortearPalavra(char *palavraDestino) {
+    FILE *arquivo = fopen("palavras.txt", "r");
+
+    if (arquivo == NULL) {
+        printf("Erro: Nao foi possivel abrir 'palavras.txt'.\n");
+        strcpy(palavraDestino, "DESCONHECIDA");
+        return;
+    }
+
+    char linha[100];
+    int totalPalavras = 0;
+
+    // Reservoir Sampling: escolhe uma palavra aleatória em uma única passada
+    while (fgets(linha, sizeof(linha), arquivo)) {
+        limparQuebraDeLinha(linha);
+        
+        if (strlen(linha) == 0) continue; // Ignora linhas vazias
+
+        totalPalavras++;
+        if ((rand() % totalPalavras) == 0) {
+            strcpy(palavraDestino, linha);
+        }
+    }
+
+    fclose(arquivo);
+}
+
