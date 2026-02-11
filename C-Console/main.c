@@ -34,8 +34,8 @@ int main()
         // Declaração de variáveis para a partida
         char palavraSecreta[47];           // Armazena a palavra que deve ser adivinhada
         char letrasReveladas[47];          // Armazena as letras já descobertas pelo jogador
-        char alfabeto[26] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";           // Alfabeto completo
-        char alfabetoDisponivel[26] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // Letras ainda disponíveis
+        char alfabeto[28] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ-";           // Alfabeto completo
+        char alfabetoDisponivel[28] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ-"; // Letras ainda disponíveis
         int opcaoMenu = 0;                 // Opção escolhida pelo usuário no menu
         int quantidadeLetras = 0;          // Número de letras na palavra secreta
         int vidas = 8;                     // Número de tentativas erradas permitidas
