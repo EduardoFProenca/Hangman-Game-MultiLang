@@ -22,9 +22,21 @@ namespace Hangman
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnSair_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void btnJogar_Click(object sender, EventArgs e)
+        {
+            Form2 telaJogo = new Form2();
+            telaJogo.Show(); // Abre a nova tela
+            this.Hide(); // Esconde o menu principal (opcional)
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
